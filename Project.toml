@@ -1,0 +1,7 @@
+name = "BitBlockArrays"
+uuid = "3058efd2-56e3-48de-9543-49320853f278"
+authors = ["Gustavo Goretkin <gustavo.goretkin@gmail.com>"]
+version = "0.1.0"
+
+[compat]
+julia = "1.4"
