@@ -1,5 +1,6 @@
 module BitBlockArrays
 
-# Write your package code here.
+include("bitblockarray.jl")
+include("uniformblockarray.jl")
 
 end
