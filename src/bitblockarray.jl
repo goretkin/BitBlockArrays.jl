@@ -62,6 +62,26 @@ function transpose_8x8bit(a::UInt64)
     return x
 end
 
+
+# https://discourse.julialang.org/t/covert-bitarray-to-int64/9193/6
+# This was stated to be better than the LLVM intrinsic!
+function revbits(z::UInt64)
+   z = (((z & 0xaaaaaaaaaaaaaaaa) >>  1) | ((z & 0x5555555555555555) <<  1))
+   z = (((z & 0xcccccccccccccccc) >>  2) | ((z & 0x3333333333333333) <<  2))
+   z = (((z & 0xf0f0f0f0f0f0f0f0) >>  4) | ((z & 0x0f0f0f0f0f0f0f0f) <<  4))
+   z = (((z & 0xff00ff00ff00ff00) >>  8) | ((z & 0x00ff00ff00ff00ff) <<  8))
+   z = (((z & 0xffff0000ffff0000) >> 16) | ((z & 0x0000ffff0000ffff) << 16))
+   z = (((z & 0xffffffff00000000) >> 32) | ((z & 0x00000000ffffffff) << 32))
+   return z
+end
+
+
 function Base.permutedims(A::BitBlockArray{2, UInt64, Tuple{3,3}})
     BitBlockArray{2, UInt64, Tuple{3,3}}(transpose_8x8bit(A.x))
+end
+
+
+function Base.rot180(A::BitBlockArray{2, UInt64, Tuple{3,3}})
+    # TODO would work for other sizes, too
+    BitBlockArray{2, UInt64, Tuple{3,3}}(revbits(A.x))
 end

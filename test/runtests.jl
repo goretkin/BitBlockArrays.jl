@@ -33,3 +33,12 @@ end
         @test collect(at) == collect(a)'
     end
 end
+
+@testset "8-by-8 rot180" begin
+    for i = 0:64
+        x = UInt64(0x1) << i
+        a = BitBlockArray(x, 8, 8)
+
+        @test collect(rot180(a)) == rot180(collect(a))
+    end
+end
