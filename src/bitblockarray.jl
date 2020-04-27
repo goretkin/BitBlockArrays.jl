@@ -11,10 +11,10 @@ end
 function BitBlockArray(x::T, dims::Vararg{Int,N}) where {T<:Unsigned, N}
     log2_dims = intlog2.(dims)
     sum(log2_dims) == log2_bits_sizeof(T) || throw(ArgumentError("dims: $(dims) not compatible with $(T)"))
-    BitBlockArray{N, T, log2_dims}(x)
+    BitBlockArray{N, T, Tuple{log2_dims...}}(x)
 end
 
-log2_Size(::Type{BitBlockArray{N, T, LD}}) where {N, T, LD} = LD
+log2_Size(::Type{BitBlockArray{N, T, LD}}) where {N, T, LD} = Tuple(LD.parameters) # TODO how to Tuple{1,2} -> (1, 2)
 
 # thought I might use the StaticArrays type trait, but so far no
 Base.size(A::Type{<:BitBlockArray}) = 2 .^ log2_Size(A)
@@ -60,4 +60,8 @@ function transpose_8x8bit(a::UInt64)
         (x >> 28) & 0x00000000F0F0F0F0
 
     return x
+end
+
+function Base.permutedims(A::BitBlockArray{2, UInt64, Tuple{3,3}})
+    BitBlockArray{2, UInt64, Tuple{3,3}}(transpose_8x8bit(A.x))
 end
