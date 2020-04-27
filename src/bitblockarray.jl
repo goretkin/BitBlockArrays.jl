@@ -38,3 +38,26 @@ function intlog2(x::Unsigned)
         i += 1
     end
 end
+
+
+"""
+Hacker's Delight, 2ed
+Henry S. Warren, Jr.
+Section 7–3 Transposing a Bit Matrix
+Figure 7.6 (tranpose8)
+"""
+function transpose_8x8bit(a::UInt64)
+    x = a
+
+    x =  x & (0xAA55AA55AA55AA55)       |
+        (x & 0x00AA00AA00AA00AA) << 7   |
+        (x >> 7) & 0x00AA00AA00AA00AA
+    x =  x & 0xCCCC3333CCCC3333         |
+        (x & 0x0000CCCC0000CCCC) << 14  |
+        (x >> 14) & 0x0000CCCC0000CCCC
+    x =  x & 0xF0F0F0F00F0F0F0F         |
+        (x & 0x00000000F0F0F0F0) << 28  |
+        (x >> 28) & 0x00000000F0F0F0F0
+
+    return x
+end

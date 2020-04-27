@@ -1,5 +1,5 @@
 using BitBlockArrays
-using BitBlockArrays: BitBlockArray, UniformBlockArray
+using BitBlockArrays: BitBlockArray, UniformBlockArray, transpose_8x8bit
 using Test
 
 @testset "BitBlockArrays.jl" begin
@@ -18,4 +18,18 @@ using Test
     uba.A[end] = BitBlockArray(typemax(UInt64), 8, 8)
     @test sum(uba) == 76
 
+end
+
+@testset "8-by-8 transpose" begin
+    # test zero matrix and all matrices with exactly one `1` element.
+    # `transpose_8x8bit` uses only linear operations, so this should result in completely testing the behavior
+    for i = 0:64
+        x = UInt64(0x1) << i
+        a = BitBlockArray(x, 8, 8)
+
+        xt = transpose_8x8bit(x)
+        at = BitBlockArray(xt, 8, 8)
+
+        @test collect(at) == collect(a)'
+    end
 end
